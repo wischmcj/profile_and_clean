@@ -20,6 +20,9 @@
     - First row of each file is a file name row, we need to skip it 
 
 ## Data Quality Issues
+ - Restoration_date has alot of 'Unknowns' 359
+ - Event month is missing for many rows (due to earlier files not including the column)
+    - Can be derrived from date_event_began
 
 ### Null/Missing Values
 | Column | Null Count | Null % | Notes |
