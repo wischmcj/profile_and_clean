@@ -12,19 +12,6 @@ from config import *
 def to_snake_case(column_name):
     return column_name.lower().replace('  ', '').replace(' ', '_')
 
-def coerce_and_track(df, column_name, func = pd.to_datetime):
-    initial_nulls = df[column_name].isna()
-    proposed_values = func(df[column_name], errors='coerce')
-    new_nulls = df[column_name].isna()
-    coerced_idxs = new_nulls not in initial_nulls
-    coerced_values = df[column_name].loc[coerced_idxs]
-    print(f"Number of values coerced for {column_name}: {len(coerced_values)}")
-    print(f"Coerced values: {coerced_values}")
-    if len(coerced_values)<len(df)/10:
-        df[column_name] = proposed_values
-    return df, coerced_values, coerced_idxs
-
-
 def correct_column_names_by_config(df):
     """Correct column names replacing 
         each of the indicated wrong column 
@@ -50,15 +37,7 @@ def correct_column_names_by_config(df):
             print(f"Column {col} not found in col_name_correction")
     return df, summary_dict
 
-def correct_column_values(df):
-    for column_name, default_func in defaults.items():
-        if column_name not in df.columns:
-            try:
-                df[column_name] = default_func(df)
-            except Exception as e:
-                breakpoint()
-                print(f"Error applying default function to {column_name} in {df['year'].iloc[0]}")
-    return df
+    
 
 def correct_common_string_issues(series):
     """
@@ -67,8 +46,8 @@ def correct_common_string_issues(series):
     # Remove leading and trailing whitespace
     new_series = series.str.strip()
     # elimiate duplicate spaces
-    new_series =new_series.str.split().apply(lambda x: " ".join(x))
-    new_series = new_series.apply(fix_text)
+    new_series =new_series.str.split().str.join(" ")
+    # new_series = new_series.apply(fix_text)
     return new_series
 
     # INSERT_YOUR_CODE
@@ -103,7 +82,6 @@ def standardize_delimited_field(series, field_name):
         return correct_delim.join(stripped_list)
 
     new_series = new_series.apply(split_and_join)
-    # new_series = correct_common_string_issues(new_series)
 
     return new_series
 
@@ -121,3 +99,223 @@ def remove_quotes(series):
     Remove quotes from the start and end of each string in the Series.
     """
     return series.astype(str).str.replace(r'^"|"$', '', regex=True)
+
+def replace_values_str(series):
+    """
+    Replace values in the Series that are in the replace_list.
+    """
+
+    for value, replacement in replace_list.items():
+        series.loc[series==value] = replacement
+    return series
+
+def replace_values(series):
+    """
+    Replace values in the Series that are in the replace_list.
+    """
+    for value, replacement in replace_list.items():
+        to_replace_idx = series.isin([value])
+        new_series = series.copy()
+        new_series[to_replace_idx] = replacement
+    return new_series
+
+
+    # INSERT_YOUR_CODE
+def standardize_datetime_series(series):
+    """
+    Standardizes values in a Series to 'YYYY-MM-DD HH:MM:SS' format.
+    Also handles values like 'MonthName' or 'MonthName, Year' by converting to a datetime.
+    Invalid dates are coerced to NaT.
+
+    Args:
+        series (pd.Series): Series containing date or datetime strings.
+
+    Returns:
+        pd.Series: Standardized datetime strings or NaT
+    """
+    import pandas as pd
+    import re
+
+    def parse_date(val):
+        # Fast-path: try normal datetime parse first (handles yyyy-mm-dd... or mm/dd/yyyy etc)
+        try:
+            dt = pd.to_datetime(val, errors='coerce')
+            if pd.notna(dt):
+                return dt.strftime('%Y-%m-%d %H:%M:%S')
+        except Exception:
+            pass
+
+        if isinstance(val, str):
+            # Handle cases like 'March', 'March, 2022', 'Mar', 'january', etc.
+            trimmed = val.strip()
+            if not trimmed or trimmed.lower() == "nan":
+                return pd.NaT
+
+            # Try to match month name with optional year
+            month_pattern = r'^(?P<month>[A-Za-z]+),?\s*(?P<year>\d{4})?$'
+            match = re.match(month_pattern, trimmed, re.IGNORECASE)
+            if match:
+                month_name = match.group('month').capitalize()
+                year = match.group('year') or "1900"  # fallback year (arbitrary)
+                try:
+                    dt = pd.to_datetime(f"{month_name} 1, {year}", errors='coerce')
+                    if pd.notna(dt):
+                        return dt.strftime('%Y-%m-%d %H:%M:%S')
+                except Exception:
+                    return pd.NaT
+
+        return pd.NaT
+
+    return series.apply(parse_date)
+
+
+def convert_to_target_types(df):
+    """
+    Identify rows with values incompatible with their target data types,
+    separate them into a new dataframe, and convert valid rows to proper types.
+    
+    Parameters:
+    -----------
+    df : pd.DataFrame
+        DataFrame with columns matching cleaned_columns and potentially mixed types
+    
+    Returns:
+    --------
+    valid_df : pd.DataFrame
+        DataFrame with only compatible rows, converted to proper types
+    incompatible_rows_df : pd.DataFrame
+        DataFrame containing rows with type incompatibilities
+    conversion_report : dict
+        Report of conversions performed and rows moved
+    """
+    import numpy as np
+    
+    incompatible_row_indices = set()
+    conversion_report = {
+        'total_rows': len(df),
+        'incompatible_rows': 0,
+        'column_issues': {}
+    }
+    
+    # Check each column for type compatibility
+    for col in cleaned_columns:
+        if col not in df.columns:
+            print(f"Warning: Column {col} not found in DataFrame")
+            continue
+            
+        target_type = cleaned_column_types[col]
+        series = df[col]
+        column_issues = []
+        
+        try:
+            if target_type == "integer":
+                # Check which rows cannot be converted to integer
+                for idx, val in series.items():
+                    if pd.isna(val):
+                        continue
+                    try:
+                        int(val)
+                    except (ValueError, TypeError):
+                        incompatible_row_indices.add(idx)
+                        column_issues.append({
+                            'row_index': idx,
+                            'value': val,
+                            'issue': 'Cannot convert to integer'
+                        })
+            
+            elif target_type == "datetime":
+                # Check which rows cannot be converted to datetime
+                for idx, val in series.items():
+                    if pd.isna(val):
+                        continue
+                    try:
+                        pd.to_datetime(val)
+                    except (ValueError, TypeError):
+                        incompatible_row_indices.add(idx)
+                        column_issues.append({
+                            'row_index': idx,
+                            'value': val,
+                            'issue': 'Cannot convert to datetime'
+                        })
+            
+            elif target_type == "time":
+                # Check which rows cannot be converted to time
+                for idx, val in series.items():
+                    if pd.isna(val):
+                        continue
+                    try:
+                        # Accept both time objects and valid time strings
+                        if not isinstance(val, pd.Timestamp) and hasattr(val, 'hour'):
+                            # Already a time object
+                            continue
+                        pd.to_datetime(val, format='%H:%M:%S')
+                    except (ValueError, TypeError):
+                        incompatible_row_indices.add(idx)
+                        column_issues.append({
+                            'row_index': idx,
+                            'value': val,
+                            'issue': 'Cannot convert to time'
+                        })
+            
+            elif target_type == "string":
+                # Strings are generally flexible, but check for unexpected types
+                for idx, val in series.items():
+                    if pd.isna(val):
+                        continue
+                    # Most values can be converted to string, so this is usually permissive
+                    pass
+        
+        except Exception as e:
+            print(f"Error checking type compatibility for column {col}: {str(e)}")
+        
+        if column_issues:
+            conversion_report['column_issues'][col] = column_issues
+    
+    # Separate compatible and incompatible rows
+    valid_indices = [i for i in df.index if i not in incompatible_row_indices]
+    valid_df = df.loc[valid_indices].copy()
+    incompatible_rows_df = df.loc[list(incompatible_row_indices)].copy()
+    
+    conversion_report['incompatible_rows'] = len(incompatible_rows_df)
+    conversion_report['valid_rows'] = len(valid_df)
+    
+    print(f"\nType Conversion Report:")
+    print(f"  Total rows: {conversion_report['total_rows']}")
+    print(f"  Valid rows: {conversion_report['valid_rows']}")
+    print(f"  Incompatible rows: {conversion_report['incompatible_rows']}")
+    
+    if conversion_report['column_issues']:
+        print(f"\nColumns with issues:")
+        for col, issues in conversion_report['column_issues'].items():
+            print(f"  {col}: {len(issues)} rows with issues")
+    
+    # Convert valid rows to target types
+    print(f"\nConverting valid rows to target types...")
+    for col in cleaned_columns:
+        if col not in valid_df.columns:
+            continue
+            
+        target_type = cleaned_column_types[col]
+        
+        try:
+            if target_type == "integer":
+                valid_df[col] = pd.to_numeric(valid_df[col], errors='coerce').astype('Int64')
+                print(f"  Converted {col} to Int64")
+            
+            elif target_type == "datetime":
+                valid_df[col] = pd.to_datetime(valid_df[col], errors='coerce')
+                print(f"  Converted {col} to datetime64")
+            
+            elif target_type == "time":
+                # Convert to datetime first, then extract time component
+                valid_df[col] = pd.to_datetime(valid_df[col], format='%H:%M:%S', errors='coerce').dt.time
+                print(f"  Converted {col} to time")
+            
+            elif target_type == "string":
+                valid_df[col] = valid_df[col].astype('string')
+                print(f"  Converted {col} to string")
+        
+        except Exception as e:
+            print(f"  Warning: Could not convert {col} to {target_type}: {str(e)}")
+    
+    return valid_df, incompatible_rows_df, conversion_report
