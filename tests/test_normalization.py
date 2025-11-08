@@ -146,10 +146,16 @@ class TestStandardizeDelimitedField:
             'Physical attack / Vandalism',
             'Physical attack ; Vandalism'
         ])
+        expected = pd.Series([
+            'Physical attack-Vandalism',
+            'Physical attack-Vandalism',
+            'Physical attack-Vandalism'
+        ])
         result = standardize_delimited_field(series, 'event_type')
         # All should use consistent delimiter (dash)
-        for item in result:
+        for idi, item in enumerate(result):
             assert '-' in item or len(item.split('-')) > 1
+            assert item == expected.iloc[idi]
     
     def test_field_not_in_config_returns_unchanged(self):
         """Test that fields not in delimiter_correction config are returned unchanged"""
@@ -162,10 +168,13 @@ class TestStandardizeDelimitedField:
     def test_empty_items_removed_from_delimited_list(self):
         """Test that empty items between delimiters are removed"""
         series = pd.Series(['Texas:; :Harris County', 'Maine:::'])
+        expected = pd.Series(['Texas: Harris County', 'Maine'])
         result = standardize_delimited_field(series, 'area_affected')
         # Empty items should be filtered out
         assert '::' not in result.iloc[0] and ';;;' not in result.iloc[0]
         assert ':::' not in result.iloc[1]
+        assert result.iloc[0] == expected.iloc[0]
+        assert result.iloc[1] == expected.iloc[1]
     
     def test_null_values_preserved(self):
         """Test that null values are preserved"""
@@ -185,6 +194,7 @@ class TestRemoveBracketedReferences:
             'County[1] reference',
             'Normal text'
         ])
+        breakpoint()
         result = remove_bracketed_references(series)
         assert '[13]' not in result.iloc[0]
         assert result.iloc[0] == 'Massachusetts: Hampden County;'
