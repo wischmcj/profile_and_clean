@@ -6,8 +6,6 @@ from pandas.api.types import is_datetime64_any_dtype as is_datetime, is_numeric_
 from config import *
 # col_name_correction, defaults, to_snake_case
 
-# Step 2
-DOWNLOADS_DIR = "./chosen"
 
 
 def column_freq_across_files(column_lists):
@@ -94,7 +92,7 @@ def identify_low_cardianlity_values(series, input_files, min_percentile=0.25, ma
     return low_cardinality
 
 
-def profile_columns(df):
+def profile_columns(df, include_unique_vals=False):
     """
     Profiles columns of a dataframe, returning:
     - column_data_types: a dictionary of column data types
@@ -115,16 +113,19 @@ def profile_columns(df):
         profile_info['column_null_info'] = characterize_nulls(df[col])
         profile_info['target_data_type'] = inferred_data_types[col].dtype
 
-        profile_info['unique_vals'] = df[col].unique()
         print(f"Column '{col}':")
         print(f" - Data Type: {profile_info['column_data_types']}")
         print(f" - Data Type: {profile_info['target_data_type']}")
-        print(f" - Unique count: {len(profile_info['unique_vals'])}")
         print(f" - Nulls: {profile_info['column_null_info']['null_count']}/{len(df)} ({profile_info['column_null_info']['null_percentage']:.2f}%)")
-        if len(profile_info['unique_vals']) < 20:
-            print(f" - Values: {profile_info['unique_vals']}")
-        else:
-            print(f" - Sample values: {profile_info['unique_vals'][:20]}")
+        
+        if include_unique_vals:
+            profile_info['unique_vals'] = df[col].unique()
+            print(f" - Unique count: {len(profile_info['unique_vals'])}")
+            if len(profile_info['unique_vals']) < 20:
+                print(f" - Values: {profile_info['unique_vals']}")
+            else:
+                print(f" - Sample values: {profile_info['unique_vals'][:20]}")
+
         profiles[col] = profile_info
     return profiles
 
