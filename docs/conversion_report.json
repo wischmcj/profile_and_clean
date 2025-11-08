@@ -1,0 +1,272 @@
+{
+  "event_month": {
+    "column_data_types": {
+      "initial": {
+        "column_data_types": "object",
+        "target_data_type": "dtype('O')",
+        "column_null_info": {
+          "null_count": 416,
+          "null_percentage": 14.57,
+          "has_nulls": true
+        }
+      },
+      "final": {
+        "column_data_types": "string",
+        "target_data_type": "string[python]",
+        "column_null_info": {
+          "null_count": 416,
+          "null_percentage": 14.57,
+          "has_nulls": true
+        }
+      }
+    }
+  },
+  "date_event_began": {
+    "column_data_types": {
+      "initial": {
+        "column_data_types": "object",
+        "target_data_type": "dtype('O')",
+        "column_null_info": {
+          "null_count": 0,
+          "null_percentage": 0.0,
+          "has_nulls": false
+        }
+      },
+      "final": {
+        "column_data_types": "datetime64[ns]",
+        "target_data_type": "dtype('<M8[ns]')",
+        "column_null_info": {
+          "null_count": 36,
+          "null_percentage": 1.26,
+          "has_nulls": true
+        }
+      }
+    }
+  },
+  "time_event_began": {
+    "column_data_types": {
+      "initial": {
+        "column_data_types": "object",
+        "target_data_type": "dtype('O')",
+        "column_null_info": {
+          "null_count": 28,
+          "null_percentage": 0.98,
+          "has_nulls": true
+        }
+      },
+      "final": {
+        "column_data_types": "object",
+        "target_data_type": "dtype('O')",
+        "column_null_info": {
+          "null_count": 28,
+          "null_percentage": 0.98,
+          "has_nulls": true
+        }
+      }
+    }
+  },
+  "restoration_date": {
+    "column_data_types": {
+      "initial": {
+        "column_data_types": "object",
+        "target_data_type": "dtype('O')",
+        "column_null_info": {
+          "null_count": 0,
+          "null_percentage": 0.0,
+          "has_nulls": false
+        }
+      },
+      "final": {
+        "column_data_types": "datetime64[ns]",
+        "target_data_type": "dtype('<M8[ns]')",
+        "column_null_info": {
+          "null_count": 402,
+          "null_percentage": 14.08,
+          "has_nulls": true
+        }
+      }
+    }
+  },
+  "restoration_time": {
+    "column_data_types": {
+      "initial": {
+        "column_data_types": "object",
+        "target_data_type": "dtype('O')",
+        "column_null_info": {
+          "null_count": 401,
+          "null_percentage": 14.04,
+          "has_nulls": true
+        }
+      },
+      "final": {
+        "column_data_types": "object",
+        "target_data_type": "dtype('O')",
+        "column_null_info": {
+          "null_count": 401,
+          "null_percentage": 14.04,
+          "has_nulls": true
+        }
+      }
+    }
+  },
+  "area_affected": {
+    "column_data_types": {
+      "initial": {
+        "column_data_types": "object",
+        "target_data_type": "dtype('O')",
+        "column_null_info": {
+          "null_count": 37,
+          "null_percentage": 1.30,
+          "has_nulls": true
+        }
+      },
+      "final": {
+        "column_data_types": "string",
+        "target_data_type": "string[python]",
+        "column_null_info": {
+          "null_count": 37,
+          "null_percentage": 1.30,
+          "has_nulls": true
+        }
+      }
+    }
+  },
+  "nerc_region": {
+    "column_data_types": {
+      "initial": {
+        "column_data_types": "object",
+        "target_data_type": "dtype('O')",
+        "column_null_info": {
+          "null_count": 52,
+          "null_percentage": 1.82,
+          "has_nulls": true
+        }
+      },
+      "final": {
+        "column_data_types": "string",
+        "target_data_type": "string[python]",
+        "column_null_info": {
+          "null_count": 52,
+          "null_percentage": 1.82,
+          "has_nulls": true
+        }
+      }
+    }
+  },
+  "alert_criteria": {
+    "column_data_types": {
+      "initial": {
+        "column_data_types": "object",
+        "target_data_type": "dtype('O')",
+        "column_null_info": {
+          "null_count": 416,
+          "null_percentage": 14.57,
+          "has_nulls": true
+        }
+      },
+      "final": {
+        "column_data_types": "string",
+        "target_data_type": "string[python]",
+        "column_null_info": {
+          "null_count": 416,
+          "null_percentage": 14.57,
+          "has_nulls": true
+        }
+      }
+    }
+  },
+  "event_type": {
+    "column_data_types": {
+      "initial": {
+        "column_data_types": "object",
+        "target_data_type": "dtype('O')",
+        "column_null_info": {
+          "null_count": 37,
+          "null_percentage": 1.30,
+          "has_nulls": true
+        }
+      },
+      "final": {
+        "column_data_types": "string",
+        "target_data_type": "string[python]",
+        "column_null_info": {
+          "null_count": 37,
+          "null_percentage": 1.30,
+          "has_nulls": true
+        }
+      }
+    }
+  },
+  "demand_loss_(mw)": {
+    "column_data_types": {
+      "initial": {
+        "column_data_types": "object",
+        "target_data_type": "dtype('O')",
+        "column_null_info": {
+          "null_count": 1076,
+          "null_percentage": 37.68,
+          "has_nulls": true
+        }
+      },
+      "final": {
+        "column_data_types": "Int64",
+        "target_data_type": "Int64Dtype()",
+        "column_null_info": {
+          "null_count": 1076,
+          "null_percentage": 37.68,
+          "has_nulls": true
+        }
+      }
+    }
+  },
+  "number_of_customers_affected": {
+    "column_data_types": {
+      "initial": {
+        "column_data_types": "object",
+        "target_data_type": "dtype('O')",
+        "column_null_info": {
+          "null_count": 580,
+          "null_percentage": 20.31,
+          "has_nulls": true
+        }
+      },
+      "final": {
+        "column_data_types": "Int64",
+        "target_data_type": "Int64Dtype()",
+        "column_null_info": {
+          "null_count": 580,
+          "null_percentage": 20.31,
+          "has_nulls": true
+        }
+      }
+    }
+  },
+  "year": {
+    "column_data_types": {
+      "initial": {
+        "column_data_types": "object",
+        "target_data_type": "dtype('O')",
+        "column_null_info": {
+          "null_count": 0,
+          "null_percentage": 0.0,
+          "has_nulls": false
+        }
+      },
+      "final": {
+        "column_data_types": "Int64",
+        "target_data_type": "Int64Dtype()",
+        "column_null_info": {
+          "null_count": 0,
+          "null_percentage": 0.0,
+          "has_nulls": false
+        }
+      }
+    }
+  },
+  "summary": {
+    "total_columns": 12,
+    "total_rows": 2856,
+    "conversions_successful": 10,
+    "columns_unchanged": 2
+  }
+}
