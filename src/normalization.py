@@ -1,3 +1,4 @@
+import json
 import os
 import re
 import pandas as pd
@@ -5,12 +6,42 @@ from pandas.api.types import is_datetime64_any_dtype as is_datetime, is_numeric_
 
 from ftfy import fix_text
 
-from config import *
-# col_name_correction, defaults, to_snake_case
+from config import (
+    replace_list, substitute_lists, delimiter_correction, col_name_correction, 
+    cleaned_columns, cleaned_column_types
+)
 
+### NON-CONFIGURABLE FUNCTIONS ####
 
 def to_snake_case(column_name):
     return column_name.lower().replace('  ', '').replace(' ', '_')
+
+def remove_bracketed_references(series):
+    """
+    Remove substrings in the form [13], [1], [abc], etc. from each string in the Series.
+    Uses regex to match square-bracket-surrounded text/numbers.
+    """
+    import re
+    return series.astype(str).str.replace(r'\[\s*[\dA-Za-z]+\s*\]', '', regex=True)
+
+def remove_quotes(series):
+    """
+    Remove quotes from the start and end of each string in the Series.
+    """
+    return series.astype(str).str.replace(r'^"|"$', '', regex=True)
+
+def correct_common_string_issues(series):
+    """
+    Correct common string issues in a series
+    """
+    # Remove leading and trailing whitespace
+    new_series = series.str.strip()
+    # elimiate duplicate spaces
+    new_series =new_series.str.split().str.join(" ")
+    # new_series = new_series.apply(fix_text)
+    return new_series
+
+### FUNCTIONS TO APPLY STANDARDIZATION CONFIGS ####
 
 def correct_column_names_by_config(df):
     """Correct column names replacing 
@@ -37,20 +68,6 @@ def correct_column_names_by_config(df):
             print(f"Column {col} not found in col_name_correction")
     return df, summary_dict
 
-    
-
-def correct_common_string_issues(series):
-    """
-    Correct common string issues in a series
-    """
-    # Remove leading and trailing whitespace
-    new_series = series.str.strip()
-    # elimiate duplicate spaces
-    new_series =new_series.str.split().str.join(" ")
-    # new_series = new_series.apply(fix_text)
-    return new_series
-
-    # INSERT_YOUR_CODE
 def standardize_delimited_field(series, field_name):
     """
     Standardize the delimiters in a string Series according to delimiter_correction config.
@@ -85,21 +102,6 @@ def standardize_delimited_field(series, field_name):
 
     return new_series
 
-    # INSERT_YOUR_CODE
-def remove_bracketed_references(series):
-    """
-    Remove substrings in the form [13], [1], [abc], etc. from each string in the Series.
-    Uses regex to match square-bracket-surrounded text/numbers.
-    """
-    import re
-    return series.astype(str).str.replace(r'\[\s*[\dA-Za-z]+\s*\]', '', regex=True)
-
-def remove_quotes(series):
-    """
-    Remove quotes from the start and end of each string in the Series.
-    """
-    return series.astype(str).str.replace(r'^"|"$', '', regex=True)
-
 def replace_values_str(series):
     """
     Replace values in the Series that are in the replace_list.
@@ -109,9 +111,21 @@ def replace_values_str(series):
         series.loc[series==value] = replacement
     return series
 
+def substitute_values_str(series):
+    """
+    Substitute values within strings that are in the substitute_lists.
+    """
+    sub_dict =  substitute_lists.get(series.name)
+    if sub_dict is None:
+        return series
+    for target_value, values in sub_dict.items():
+        for value in values:
+            series = series.str.lower().str.replace(value, target_value, regex=False)
+    return series
+
 def replace_values(series):
     """
-    Replace values in the Series that are in the replace_list.
+    Replace values indicated as invalid. Entire value must be included in the replace_list.
     """
     for value, replacement in replace_list.items():
         to_replace_idx = series.isin([value])
@@ -119,8 +133,9 @@ def replace_values(series):
         new_series[to_replace_idx] = replacement
     return new_series
 
+##### TYPE STANDARDIZATION FUNCTIONS ####
 
-    # INSERT_YOUR_CODE
+
 def standardize_datetime_series(series):
     """
     Standardizes values in a Series to 'YYYY-MM-DD HH:MM:SS' format.
@@ -188,7 +203,7 @@ def convert_to_target_types(df):
     conversion_report : dict
         Report of conversions performed and rows moved
     """
-    import numpy as np
+    print("CONVERTING COLUMNS TO TARGET DATA TYPES")
     
     incompatible_row_indices = set()
     conversion_report = {
@@ -319,3 +334,54 @@ def convert_to_target_types(df):
             print(f"  Warning: Could not convert {col} to {target_type}: {str(e)}")
     
     return valid_df, incompatible_rows_df, conversion_report
+
+
+def extract_distinct_delimited_values_and_cooccurrence(df, 
+                                                      delimited_column,
+                                                      ):
+    """
+    Converts delimited strings (as identified by the config) into a list of values. Then 
+    builds a co-occurrence dictionary for the full column to identify inter-value relationships.
+    Returns:
+        - A dictionary mapping each new (destination) column to a sorted list of distinct values.
+        - A co-occurrence statistics dictionary for the full delimited column.
+    """
+    from collections import Counter, defaultdict
+
+    delimiter = delimiter_correction[delimited_column][0]
+    value_lists = []
+    for val in df[delimited_column].fillna(""):
+        # Split, remove whitespace, and skip empty (after split)
+        values = [v.strip() for v in str(val).split(delimiter) if v.strip()]
+        value_lists.append(values)
+
+    # All values across all rows
+    all_values = [v for row in value_lists for v in row]
+    distinct_values = sorted(set(all_values))
+
+    # Build co-occurrence statistics for full column
+    cooccurrence = {v: Counter() for v in distinct_values}
+    for row in value_lists:
+        for i, v1 in enumerate(row):
+            for v2 in row:
+                if v1 != v2:
+                    cooccurrence[v1][v2] += 1
+    cooccurrence_dict = {
+        v: dict(counts) for v, counts in cooccurrence.items()
+    }
+    distinct_values_by_col = {}
+    distinct_values_by_col[delimited_column] = distinct_values
+
+    return df, distinct_values_by_col, cooccurrence_dict
+
+def save_distinct_values_for_mapping(df, column_name):
+    """
+    Save the distinct values and cooccurrence dictionary for a delimited column to a file.
+    *** This is probably more of a profiling function than a normalization function... ***
+    """
+    df, distinct_values, cooccurrence_dict = extract_distinct_delimited_values_and_cooccurrence(df, column_name)
+    with open(f'data/distinct_values_{column_name}.json', 'w') as f:
+        json.dump(distinct_values, f, indent=4)
+    with open(f'data/cooccurrence_dict_{column_name}.json', 'w') as f:
+        json.dump(cooccurrence_dict, f, indent=4)
+    return df

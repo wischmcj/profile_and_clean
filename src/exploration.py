@@ -1,11 +1,10 @@
 import os
+import json
 import pandas as pd
 from pandas.api.types import is_datetime64_any_dtype as is_datetime, is_numeric_dtype as is_numeric
 
 
 from config import *
-# col_name_correction, defaults, to_snake_case
-
 
 
 def column_freq_across_files(column_lists):
@@ -33,29 +32,13 @@ def column_freq_across_files(column_lists):
     for col, count in sorted(column_counts.items(), key=lambda x: -x[1]):
         print(f"{col}: {count}/{num_files}")
 
-def search_for_bad_values(df):
-    """
-    Searches for bad values in a dataframe, returning:
-    - low_cardinality: a dictionary of low cardinality values
-    """
-    low_cardinality = {}
-    for col in df.columns:
-       # we report on values that occur half as often as they would if randomly distributed
-       unique_vals = df[col].unique()
-       expected_freq_percentile = (1/len(unique_vals))/2
-       print(f"Expected frequency percentile for {col} is {expected_freq_percentile}")
-       if expected_freq_percentile>1 or expected_freq_percentile<0.01:
-           breakpoint()
-           print(f"Expected frequency percentile for {col} is {expected_freq_percentile}")
-           expected_freq_percentile = .1
-       low_cardinality = identify_low_cardianlity_values(df[col], 
-                                                       input_files=df['year'],
-                                                       min_percentile=expected_freq_percentile)
-       print(f" - Low cardinality values for {col}:")
-       print(f'{low_cardinality}')
-       breakpoint()
-
 def characterize_nulls(series):
+    """
+    Characterize the nulls in a series, returning:
+        - null_count: the number of nulls in the series
+        - null_percentage: the percentage of nulls in the series
+        - has_nulls: a boolean indicating if the series has nulls
+    """
     null_count = series.isnull().sum()
     total_rows = len(series)
     null_percentage = (null_count / total_rows) * 100 if total_rows > 0 else 0
@@ -65,31 +48,6 @@ def characterize_nulls(series):
         'has_nulls': null_count > 0
     }
     return null_info
-
-def identify_low_cardianlity_values(series, input_files, min_percentile=0.25, max_percentile=0.9):
-    """
-    Identify unique values in the input series that occur infrequently.
-    Returns a list of values and their counts that are considered 'low cardinality'.
-    You may customize the threshold with `min_count` or `max_percentage`.
-    """
-    value_counts = series.value_counts(dropna=False)
-    # Set thresholds based on percentiles of value_counts
-    if len(value_counts) > 0:
-        min_count = int(value_counts.quantile(min_percentile))
-        max_count = int(value_counts.quantile(max_percentile))
-        print(f"Min count: {min_count}, Max count: {max_count}")
-
-    total = len(series)
-    low_cardinality = []
-    for val, count in value_counts.items():
-        percentage = (count / total) * 100 if total > 0 else 0
-        if not (count <= max_count and count >= min_count):
-            low_cardinality.append({'value': val, 'count': count, 'percentage': percentage})
-    for entry in low_cardinality:
-        # For each low cardinality value, get the associated input_files
-        indices = series[series == entry['value']].index
-        entry['input_files'] = input_files.loc[indices].unique().tolist()
-    return low_cardinality
 
 
 def profile_columns(df, include_unique_vals=False):
@@ -129,3 +87,57 @@ def profile_columns(df, include_unique_vals=False):
         profiles[col] = profile_info
     return profiles
 
+def identify_low_cardianlity_values(series, input_files, min_percentile=0.25, max_percentile=0.9):
+    """
+    Identify unique values in the input series that occur infrequently. These are more likely to be errors or typos.
+    Returns a list of values and their counts that are considered 'low cardinality'.
+    You may customize the threshold with `min_count` or `max_percentage`.
+    """
+    value_counts = series.value_counts(dropna=False)
+    # Set thresholds based on percentiles of value_counts
+    if len(value_counts) > 0:
+        min_count = int(value_counts.quantile(min_percentile))
+        max_count = int(value_counts.quantile(max_percentile))
+        print(f"Min count: {min_count}, Max count: {max_count}")
+
+    total = len(series)
+    low_cardinality = []
+    for val, count in value_counts.items():
+        percentage = (count / total) * 100 if total > 0 else 0
+        if not (count <= max_count and count >= min_count):
+            low_cardinality.append({'value': val, 'count': count, 'percentage': percentage})
+    for entry in low_cardinality:
+        # For each low cardinality value, get the associated input_files
+        indices = series[series == entry['value']].index
+        entry['input_files'] = input_files.loc[indices].unique().tolist()
+    return low_cardinality
+
+def search_for_bad_values(df):
+    """
+        A wrapper around identify_low_cardianlity_values that allows for
+            more insight into its operation
+    """
+    low_cardinality = {}
+    for col in df.columns:
+       # we report on values that occur half as often as they would if randomly distributed
+       unique_vals = df[col].unique()
+       expected_freq_percentile = (1/len(unique_vals))/2
+       print(f"Expected frequency percentile for {col} is {expected_freq_percentile}")
+       if expected_freq_percentile>1 or expected_freq_percentile<0.01:
+           print(f"Expected frequency percentile for {col} is {expected_freq_percentile}")
+           expected_freq_percentile = .1
+       low_cardinality = identify_low_cardianlity_values(df[col], 
+                                                       input_files=df['year'],
+                                                       min_percentile=expected_freq_percentile)
+       print(f" - Low cardinality values for {col}:")
+       print(f'{low_cardinality}')
+
+
+def profile_delimited_columns(df):
+    """
+    Profile the delimited columns in the dataframe.
+    """
+    df = save_distinct_values_for_mapping(df, 'area_affected')
+    df = save_distinct_values_for_mapping(df, 'event_type')
+    df = save_distinct_values_for_mapping(df, 'nerc_region')
+    return df

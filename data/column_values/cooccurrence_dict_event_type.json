@@ -1,0 +1,362 @@
+{
+    "Actual Physical Attack": {
+        "Vandalism": 24
+    },
+    "Actual Physical Event": {},
+    "Coal": {
+        "Fuel Supply Emergency": 11
+    },
+    "Cold": {
+        "Voltage Reduction due to Severe Weather": 6,
+        "Public Appeal due to Severe Weather": 13,
+        "Severe Weather": 1,
+        "Voltage Reduction": 3,
+        "Public Appeal": 2,
+        "Load Shed 100+MW due to Severe Weather": 2,
+        "Fuel Supply Emergency due to Severe Weather": 1
+    },
+    "Copper Theft": {
+        "Physical Attack": 2
+    },
+    "Copper Wire Theft": {
+        "Vandalism": 1
+    },
+    "Cyber Attack": {},
+    "Cyber Event": {},
+    "Cyber Event with Potential to Cause Impact": {},
+    "Cyber event (information technology)": {},
+    "Distribution Interruption": {
+        "Severe Weather": 10,
+        "Unknown Cause": 1,
+        "Transmission Interruption": 1
+    },
+    "Earthquake": {},
+    "Electrical System Islanding": {},
+    "Electrical System Separation (Islanding": {},
+    "Electrical System Separation (Islanding)": {
+        "Severe Weather": 2
+    },
+    "Equipment Failure": {
+        "Transmission System Interruption": 1
+    },
+    "Equipment Fault": {
+        "Vandalism": 1
+    },
+    "Equipment Trip & Failure": {},
+    "Failure at high voltage substation or switchyard": {
+        "Other": 2,
+        "Unknown": 2,
+        "Weather or natural disaster": 2
+    },
+    "Fog": {
+        "Severe Weather": 1
+    },
+    "Fuel Supply Deficiency": {},
+    "Fuel Supply Emergencies (Coal)": {},
+    "Fuel Supply Emergency": {
+        "Natural Gas": 5,
+        "Coal": 11,
+        "Hydro": 2,
+        "Petroleum": 1
+    },
+    "Fuel Supply Emergency (Natural Gas & Fuel Oil)": {},
+    "Fuel Supply Emergency (Natural Gas)": {},
+    "Fuel Supply Emergency due to Severe Weather": {
+        "Cold": 1
+    },
+    "Fuel supply emergency": {},
+    "Generation Inadequacy": {},
+    "Generator Trip": {
+        "Voltage Reduction": 1,
+        "Load Shed": 1,
+        "Load Shed 100+ MW": 1
+    },
+    "Generator loss or failure": {
+        "Physical attack": 1
+    },
+    "Hail Storm": {
+        "Severe Weather": 1
+    },
+    "Hailstorm": {
+        "Severe Weather": 2
+    },
+    "Heatwave": {
+        "Public Appeal": 1
+    },
+    "Heavy Winds": {
+        "Severe Weather": 2
+    },
+    "High Winds": {
+        "Severe Weather": 7,
+        "Thunderstorms": 1
+    },
+    "Hydro": {
+        "Fuel Supply Emergency": 2
+    },
+    "Ice": {
+        "Severe Weather": 15,
+        "Snow": 14
+    },
+    "Ice and Snow Storm": {
+        "Severe Weather": 1
+    },
+    "Islanding": {},
+    "Lightning": {
+        "Severe Weather": 1
+    },
+    "Lightning Strike": {
+        "Severe Weather": 1
+    },
+    "Line and Generator Trip": {
+        "Voltage Reduction": 1
+    },
+    "Load Shed": {
+        "Generator Trip": 1
+    },
+    "Load Shed 100+ MW": {
+        "Generator Trip": 1
+    },
+    "Load Shed 100+MW": {},
+    "Load Shed 100+MW due to Severe Weather": {
+        "Voltage Reduction": 2,
+        "Public Appeal": 2,
+        "Cold": 2
+    },
+    "Load Shed of 100 MW": {
+        "Public Appeal to Reduce Electricity Usage": 2
+    },
+    "Load Shed of 100+ MW": {},
+    "Load Shed of 100+ MW Under Emergency Operational Policy": {},
+    "Load shedding of 100 Megawatts": {},
+    "Loss of 300+ MW Load": {
+        "Severe Weather": 1,
+        "Thunderstorms": 1
+    },
+    "Loss of Part of a High Voltage Substation": {
+        "Physical Attack": 1
+    },
+    "Loss of Power from Wholesale Provider": {
+        "Major Distribution Disruption": 1
+    },
+    "Major Distribution Disruption": {
+        "Loss of Power from Wholesale Provider": 1
+    },
+    "Natural Disaster": {
+        "Transmission Interruption": 2
+    },
+    "Natural Gas": {
+        "Fuel Supply Emergency": 5
+    },
+    "Operational Failure of Electrical System": {},
+    "Operator Action(s)": {
+        "Sabotage": 1
+    },
+    "Other": {
+        "Failure at high voltage substation or switchyard": 2,
+        "Physical attack": 3,
+        "Vandalism": 3,
+        "Weather or natural disaster": 3,
+        "Theft": 2,
+        "Suspicious activity": 1
+    },
+    "Petroleum": {
+        "Fuel Supply Emergency": 1
+    },
+    "Physcial Attack": {
+        "Vandalism": 10,
+        "Sabotage": 3
+    },
+    "Physical Attack": {
+        "Vandalism": 54,
+        "Sabatoge": 1,
+        "Suspcious Activity": 2,
+        "Loss of Part of a High Voltage Substation": 1,
+        "Vandalism & Sabotage": 1,
+        "Copper Theft": 2,
+        "Theft": 1
+    },
+    "Physical attack": {
+        "Vandalism": 10,
+        "Suspicious activity": 6,
+        "Other": 3,
+        "Theft": 1,
+        "Generator loss or failure": 1
+    },
+    "Potential Physical Attack": {},
+    "Public Appeal": {
+        "Voltage Reduction": 2,
+        "Load Shed 100+MW due to Severe Weather": 2,
+        "Cold": 2,
+        "Heatwave": 1
+    },
+    "Public Appeal due to Severe Weather": {
+        "Cold": 13,
+        "Voltage Reduction": 1
+    },
+    "Public Appeal to Reduce Electricity Usage": {
+        "Wild Fires": 3,
+        "Load Shed of 100 MW": 2
+    },
+    "Sabatoge": {
+        "Physical Attack": 1
+    },
+    "Sabotage": {
+        "Vandalism": 1,
+        "Physcial Attack": 3,
+        "Operator Action(s)": 1
+    },
+    "Sever Weather": {},
+    "Severe Weather": {
+        "Transmission Interruption": 48,
+        "Distribution Interruption": 10,
+        "Cold": 1,
+        "Snow": 14,
+        "Ice": 15,
+        "Thunderstorms": 63,
+        "High Winds": 7,
+        "Winter Storm": 7,
+        "Wind": 7,
+        "Heavy Winds": 2,
+        "Winter": 11,
+        "Transmisison Interruption": 6,
+        "Wind Storm": 4,
+        "Winter Storm Nemo": 3,
+        "Storms and Wind": 1,
+        "Tornados": 2,
+        "Lightning": 1,
+        "Loss of 300+ MW Load": 1,
+        "Hailstorm": 2,
+        "Fog": 1,
+        "Electrical System Separation (Islanding)": 2,
+        "Lightning Strike": 1,
+        "Hail Storm": 1,
+        "Ice and Snow Storm": 1,
+        "Tornadoes": 2
+    },
+    "Snow": {
+        "Severe Weather": 14,
+        "Ice": 14
+    },
+    "Storms and Wind": {
+        "Severe Weather": 1
+    },
+    "Suspcious Activity": {
+        "Suspected Physical Attack": 1,
+        "Physical Attack": 2
+    },
+    "Suspected Cyber Attack": {},
+    "Suspected Physical Attack": {
+        "Suspcious Activity": 1,
+        "Vandalism": 16
+    },
+    "Suspicious Activity": {},
+    "Suspicious activity": {
+        "Physical attack": 6,
+        "Vandalism": 12,
+        "Theft": 5,
+        "Other": 1,
+        "Transmission equipment failure": 1
+    },
+    "System": {
+        "wide voltage reductions of 3 percent or more": 1
+    },
+    "System Operations": {},
+    "System Wide Voltage Reduction": {},
+    "Theft": {
+        "Vandalism": 22,
+        "Suspicious activity": 5,
+        "Physical attack": 1,
+        "Other": 2,
+        "Physical Attack": 1
+    },
+    "Threat of physical attack": {},
+    "Thunderstorms": {
+        "Severe Weather": 63,
+        "High Winds": 1,
+        "Loss of 300+ MW Load": 1
+    },
+    "Tornadoes": {
+        "Severe Weather": 2
+    },
+    "Tornados": {
+        "Severe Weather": 2
+    },
+    "Transmisison Interruption": {
+        "Severe Weather": 6
+    },
+    "Transmission Disruption": {},
+    "Transmission Interruption": {
+        "Severe Weather": 48,
+        "Natural Disaster": 2,
+        "Distribution Interruption": 1
+    },
+    "Transmission System Interruption": {
+        "Equipment Failure": 1
+    },
+    "Transmission equipment failure": {
+        "Suspicious activity": 1
+    },
+    "Uncontrolled Loss of 300 Megawatts": {},
+    "Unknown": {
+        "Failure at high voltage substation or switchyard": 2,
+        "Vandalism": 1
+    },
+    "Unknown Cause": {
+        "Distribution Interruption": 1
+    },
+    "Vandalism": {
+        "Actual Physical Attack": 24,
+        "Theft": 22,
+        "Physical attack": 10,
+        "Suspicious activity": 12,
+        "Other": 3,
+        "Unknown": 1,
+        "Physical Attack": 54,
+        "Suspected Physical Attack": 16,
+        "Physcial Attack": 10,
+        "Equipment Fault": 1,
+        "Copper Wire Theft": 1,
+        "Sabotage": 1
+    },
+    "Vandalism & Sabotage": {
+        "Physical Attack": 1
+    },
+    "Voltage Reduction": {
+        "Public Appeal due to Severe Weather": 1,
+        "Cold": 3,
+        "Public Appeal": 2,
+        "Load Shed 100+MW due to Severe Weather": 2,
+        "Generator Trip": 1,
+        "Line and Generator Trip": 1
+    },
+    "Voltage Reduction due to Severe Weather": {
+        "Cold": 6
+    },
+    "Weather": {},
+    "Weather or Natural Disaster": {},
+    "Weather or natural disaster": {
+        "Failure at high voltage substation or switchyard": 2,
+        "Other": 3
+    },
+    "Wild Fires": {
+        "Public Appeal to Reduce Electricity Usage": 3
+    },
+    "Wind": {
+        "Severe Weather": 7
+    },
+    "Wind Storm": {
+        "Severe Weather": 4
+    },
+    "Winter": {
+        "Severe Weather": 11
+    },
+    "Winter Storm": {
+        "Severe Weather": 7
+    },
+    "Winter Storm Nemo": {
+        "Severe Weather": 3
+    },
+    "wide voltage reductions of 3 percent or more": {
+        "System": 1
+    }
+}
